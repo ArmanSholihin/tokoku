@@ -12,7 +12,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        {
+            $products = Product::all();
+            return view('products.index', compact('products'));
+        }
     }
 
     /**
@@ -20,7 +23,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return view('products.create');
     }
 
     /**
@@ -28,7 +31,18 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request -> validate([
+            'nama'=>'required',
+            'harga'=>'required|numeric',
+            'stok'=>'required|numeric'
+        ]);
+        Product::create([
+            'nama' => $request->nama,
+            'harga' => $request->harga,
+            'stok' => $request->stok,
+        ]);
+        return redirect()->route('products.index')
+        ->with('success', 'Produk berhasil ditambahkan');
     }
 
     /**
@@ -44,7 +58,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        return view('products.edit', compact('product'));
     }
 
     /**
@@ -52,7 +66,16 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        $request->validate([
+            'nama' => 'required',
+            'harga' => 'required|numeric',
+            'stok' => 'required|numeric',
+        ]);
+
+        $product->update($request->all());
+
+        return redirect()->route('products.index')
+            ->with('success', 'Produk berhasil diupdate');
     }
 
     /**
@@ -60,6 +83,9 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+
+        return redirect()->route('products.index')
+            ->with('success', 'Produk berhasil dihapus');
     }
 }
